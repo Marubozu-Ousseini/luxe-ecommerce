@@ -26,8 +26,16 @@ jobs:
       
       - name: Ensure origin/main is available
         run: |
-          git fetch origin main:refs/remotes/origin/main --depth=1 || true
-          git show-ref --verify --quiet refs/remotes/origin/main || git rev-parse --verify --quiet main || true
+          echo "Fetching origin/main..."
+          git fetch origin main:refs/remotes/origin/main --depth=1 || echo "Warning: Could not fetch origin/main"
+          echo "Verifying refs..."
+          if git show-ref --verify --quiet refs/remotes/origin/main; then
+            echo "✓ origin/main is available"
+          elif git rev-parse --verify --quiet main; then
+            echo "✓ main is available locally"
+          else
+            echo "Warning: Neither origin/main nor local main found"
+          fi
       
       - name: Configure git for automated commits
         run: |
